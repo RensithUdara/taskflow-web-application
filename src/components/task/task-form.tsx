@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,17 +41,21 @@ interface TaskFormProps {
   isLoading?: boolean;
 }
 
+const UNASSIGNED_VALUE = "__UNASSIGNED__";
+
 export function TaskForm({ onSubmit, initialData, isLoading }: TaskFormProps) {
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: initialData ? {
       ...initialData,
+      assignee: initialData.assignee === undefined ? UNASSIGNED_VALUE : initialData.assignee,
       dueDate: initialData.dueDate ? parseISO(initialData.dueDate) : undefined,
     } : {
       title: "",
       description: "",
       priority: "Medium",
       status: "To Do",
+      assignee: UNASSIGNED_VALUE, // Default to unassigned
     },
   });
 
@@ -140,14 +145,14 @@ export function TaskForm({ onSubmit, initialData, isLoading }: TaskFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Assignee</FormLabel>
-                 <Select onValueChange={field.onChange} defaultValue={field.value}>
+                 <Select onValueChange={field.onChange} defaultValue={field.value || UNASSIGNED_VALUE}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select assignee" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="">Unassigned</SelectItem>
+                    <SelectItem value={UNASSIGNED_VALUE}>Unassigned</SelectItem>
                     {ASSIGNEES.map((assignee) => (
                       <SelectItem key={assignee} value={assignee}>{assignee}</SelectItem>
                     ))}

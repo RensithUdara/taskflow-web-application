@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
@@ -14,6 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { PlusCircle, AlertTriangle } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { format } from 'date-fns';
+
+const UNASSIGNED_FORM_VALUE = "__UNASSIGNED__";
 
 export default function TaskPage() {
   const [tasks, setTasks] = useState<Task[]>(INITIAL_TASKS);
@@ -74,13 +77,16 @@ export default function TaskPage() {
   };
 
   const handleTaskFormSubmit = (values: TaskFormValues) => {
+    const finalAssignee = values.assignee === UNASSIGNED_FORM_VALUE ? undefined : values.assignee;
+
     if (editingTask) {
-      setTasks(tasks.map(t => t.id === editingTask.id ? { ...editingTask, ...values, dueDate: values.dueDate ? format(values.dueDate, "yyyy-MM-dd") : undefined } : t));
+      setTasks(tasks.map(t => t.id === editingTask.id ? { ...editingTask, ...values, assignee: finalAssignee, dueDate: values.dueDate ? format(values.dueDate, "yyyy-MM-dd") : undefined } : t));
       toast({ title: "Task Updated", description: `Task "${values.title}" has been updated.` });
     } else {
       const newTask: Task = {
         id: String(Date.now()),
         ...values,
+        assignee: finalAssignee,
         dueDate: values.dueDate ? format(values.dueDate, "yyyy-MM-dd") : undefined,
       };
       setTasks([newTask, ...tasks]);
