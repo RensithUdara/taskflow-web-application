@@ -96,7 +96,7 @@ export default function TaskPage() {
     setEditingTask(null);
   };
 
-  const handleDeleteTask = (taskId: string) => {
+  const handleDeleteRequest = (taskId: string) => {
     setTaskToDeleteId(taskId);
     setIsDeleteDialogOpen(true);
   };
@@ -116,6 +116,30 @@ export default function TaskPage() {
     setIsAIResourceDialogOpen(true);
   };
 
+  const handleToggleComplete = (taskId: string) => {
+    let taskTitle = "";
+    let newStatus: Status = "To Do";
+
+    setTasks(prevTasks =>
+      prevTasks.map(task => {
+        if (task.id === taskId) {
+          taskTitle = task.title;
+          newStatus = task.status === 'Completed' ? 'To Do' : 'Completed';
+          return { ...task, status: newStatus };
+        }
+        return task;
+      })
+    );
+
+    if (taskTitle) {
+      toast({
+        title: `Task ${newStatus === 'Completed' ? 'Completed' : 'Reopened'}`,
+        description: `Task "${taskTitle}" marked as ${newStatus}.`,
+      });
+    }
+  };
+
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <AppHeader />
@@ -134,8 +158,9 @@ export default function TaskPage() {
           <TaskList
             tasks={filteredTasks}
             onEditTask={handleOpenTaskForm}
-            onDeleteTask={handleDeleteTask}
+            onDeleteTask={handleDeleteRequest}
             onSuggestResources={handleSuggestResources}
+            onToggleComplete={handleToggleComplete}
           />
         </div>
       </main>
