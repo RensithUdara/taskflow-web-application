@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Task } from "@/types";
@@ -9,9 +10,10 @@ interface TaskListProps {
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
   onSuggestResources: (task: Task) => void;
+  onToggleComplete: (taskId: string) => void;
 }
 
-export function TaskList({ tasks, onEditTask, onDeleteTask, onSuggestResources }: TaskListProps) {
+export function TaskList({ tasks, onEditTask, onDeleteTask, onSuggestResources, onToggleComplete }: TaskListProps) {
   if (tasks.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border border-dashed bg-card p-12 text-center shadow-sm">
@@ -32,6 +34,7 @@ export function TaskList({ tasks, onEditTask, onDeleteTask, onSuggestResources }
           onEdit={onEditTask}
           onDelete={onDeleteTask}
           onSuggestResources={onSuggestResources}
+          onToggleComplete={onToggleComplete}
         />
       ))}
     </div>
